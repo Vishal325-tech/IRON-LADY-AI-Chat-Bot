@@ -1,0 +1,11 @@
+{
+  "name": "ironlady-ai-chatbot",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^4.22.1",
+    "openai": "^4.104.0"
+  }
+}

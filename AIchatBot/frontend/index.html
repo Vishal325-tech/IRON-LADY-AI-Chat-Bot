@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Iron Lady AI Guide</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #fbeff5, #f5f5f5);
+            margin: 0;
+        }
+
+        #chat {
+            max-width: 480px;
+            width: 95%;
+            height: 90vh;
+            margin: 20px auto;
+            background: white;
+            padding: 15px;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        h3 {
+            text-align: center;
+            color: #b23a6f;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .user-msg {
+            background: #b23a6f;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 14px 14px 0 14px;
+            margin: 6px 0;
+            max-width: 80%;
+            align-self: flex-end;
+        }
+
+        .ai-msg {
+            background: #f1f1f1;
+            padding: 10px 14px;
+            border-radius: 14px 14px 14px 0;
+            margin: 6px 0;
+            max-width: 80%;
+            align-self: flex-start;
+        }
+
+        .option-box {
+            background: #fafafa;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .option-box label {
+            display: block;
+            margin: 6px 0;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        #msg {
+            flex: 1;
+            padding: 14px;
+            border-radius: 25px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            background: #b23a6f;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .footer {
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  margin-top: 8px;
+}
+
+    </style>
+</head>
+
+<body>
+
+    <div id="chat">
+        <h3>Iron Lady AI Guide</h3>
+        <div id="messages"></div>
+        <div id="options"></div>
+
+        <div class="input-area">
+            <input id="msg" placeholder="Type here..." autocomplete="off" onkeydown="if(event.key==='Enter') send()" />
+            <button class="send-btn" onclick="send()">➤</button>
+        </div>
+    </div>
+
+    <script>
+        let user = {
+            stage: "start",
+            name: "",
+            mobile: "",
+            location: "",
+            gender: "",
+            interest: ""
+        };
+
+        function scrollChat() {
+                const chat = document.getElementById("messages");
+                setTimeout(() => {
+                    chat.scrollTop = chat.scrollHeight;
+                }, 50);
+            }
+
+
+        function showUser(text) {
+            document.getElementById("messages").innerHTML +=
+                `<div class="user-msg">${text}</div>`;
+            scrollChat();
+        }
+
+        function showAI(text) {
+            document.getElementById("messages").innerHTML +=
+                `<div class="ai-msg">${text}</div>`;
+            scrollChat();
+        }
+
+        async function send() {
+            const input = document.getElementById("msg");
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            showUser(msg);
+            input.value = "";
+
+            // START
+            if (user.stage === "start") {
+                showAI("Hello! 👋 Welcome to Iron Lady. May I know your name?");
+                user.stage = "askName";
+                return;
+            }
+
+            // NAME
+            if (user.stage === "askName") {
+                user.name = msg;
+                showAI("Thanks! 📱 Please share your mobile number.");
+                user.stage = "askMobile";
+                return;
+            }
+
+            // MOBILE
+            if (user.stage === "askMobile") {
+                const phoneRegex = /^[6-9]\d{9}$/;
+
+                if (!phoneRegex.test(msg)) {
+                    showAI(" Oho! Please enter a valid 10-digit mobile number...!");
+                    return;
+                }
+
+                user.mobile = msg;
+                showAI("Great 👍 Which city are you from?");
+                user.stage = "askLocation";
+                return;
+            }
+
+            // LOCATION
+            if (user.stage === "askLocation") {
+                user.location = msg;
+                showGenderOptions();
+                user.stage = "askGender";
+                return;
+            }
+
+            // NORMAL CHAT
+            await talkToAI(msg);
+        }
+
+        function showGenderOptions() {
+            showAI("Please select your gender:");
+
+            document.getElementById("options").innerHTML = `
+          <div class="option-box">
+            <label><input type="radio" name="gender" value="Female"> Female</label>
+            <label><input type="radio" name="gender" value="Male"> Male</label>
+            <label><input type="radio" name="gender" value="Other"> Other</label>
+            <label><input type="radio" name="gender" value="Prefer not to say"> Prefer not to say</label>
+            <button onclick="selectGender()">Continue</button>
+          </div>
+        `;
+        }
+
+        function selectGender() {
+            const selected = document.querySelector('input[name="gender"]:checked');
+            if (!selected) return alert("Please select a gender");
+
+            user.gender = selected.value;
+            document.getElementById("options").innerHTML = "";
+
+            showAI(`Thanks, ${user.name}! 🌸 Please choose a program you’re interested in:`);
+            user.stage = "interest";
+            loadPrograms();
+        }
+
+        async function loadPrograms() {
+            const res = await fetch("http://localhost:5000/programs");
+            const programs = await res.json();
+
+            let html = `<div class="option-box">`;
+            programs.forEach(p => {
+                html += `
+            <label>
+              <input type="radio" name="interest" value="${p.name}">
+              ${p.name}
+            </label>
+          `;
+            });
+            html += `<button onclick="selectInterest()">Continue</button></div>`;
+            document.getElementById("options").innerHTML = html;
+        }
+
+        async function selectInterest() {
+            const selected = document.querySelector('input[name="interest"]:checked');
+            if (!selected) return alert("Please select a program");
+
+            user.interest = selected.value;
+            user.stage = "done";
+            document.getElementById("options").innerHTML = "";
+
+            // SAVE USER
+            await fetch("http://localhost:5000/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: user.name,
+                    mobile: user.mobile,
+                    location: user.location,
+                    gender: user.gender,
+                    interest: user.interest,
+                    goal: "Career & personal growth"
+                })
+            });
+
+            await talkToAI(user.interest);
+        }
+
+        async function talkToAI(message) {
+            const res = await fetch("http://localhost:5000/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message, user })
+            });
+
+            const data = await res.json();
+            showAI(data.reply);
+        }
+    </script>
+
+<div class="footer">
+    © 2026 Made by Vishal Shankar Handigund
+</div>
+</body>
+
+</html>
