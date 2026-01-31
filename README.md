@@ -93,6 +93,7 @@ Open frontend/index.html using Live Server
 
 ## 📁 Project Structure
 
+
 ironlady-ai-guide/
 ├── backend/
 │ ├── server.js
