@@ -91,15 +91,17 @@ Frontend
 Open frontend/index.html using Live Server
 * Ensure backend is running on port 5000
 
-📂 Project Structure
+## 📁 Project Structure
+
 ironlady-ai-guide/
 ├── backend/
-│   ├── server.js
-│   ├── package.json
-│   └── .env
+│ ├── server.js
+│ ├── package.json
+│ └── .env
 ├── frontend/
-│   └── index.html
+│ └── index.html
 └── README.md
+
 
 Notes
 Data is stored in memory for demo purposes
