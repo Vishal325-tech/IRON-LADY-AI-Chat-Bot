@@ -103,6 +103,10 @@ ironlady-ai-guide/
 ├── frontend/
 │ └── index.html
 └── README.md
+<img width="306" height="216" alt="image" src="https://github.com/user-attachments/assets/f09aa38b-9611-4078-9961-cf180885f79d" />
+
+
+
 
 
 Notes
