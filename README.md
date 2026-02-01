@@ -99,11 +99,11 @@ ironlady-ai-guide/
 ├── backend/
 │ ├── server.js
 │ ├── package.json
-│ └── .env
 ├── frontend/
 │ └── index.html
 └── README.md
-<img width="306" height="216" alt="image" src="https://github.com/user-attachments/assets/f09aa38b-9611-4078-9961-cf180885f79d" />
+<img width="196" height="153" alt="image" src="https://github.com/user-attachments/assets/bdaaccac-ef05-43b0-a638-8e42967a1e25" />
+
 
 
 
